@@ -1,16 +1,19 @@
 import tensorflow as tf
 import numpy as np
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 from tensorflow.keras.preprocessing import image
 
 app = Flask(__name__)
 
+# Load model
 model = tf.keras.models.load_model("model/vehicle_classifier.h5")
 
+# Classes
 class_names = ['ambulance', 'bike', 'bus', 'car', 'truck']
 
 
 def get_decision(predicted_class, confidence):
+
     if predicted_class == "ambulance":
         if confidence >= 0.75:
             return "🚨 High Confidence (Emergency)"
@@ -18,6 +21,7 @@ def get_decision(predicted_class, confidence):
             return "❓ Needs Review"
         else:
             return "⚠️ Uncertain"
+
     else:
         if confidence >= 0.85:
             return "✅ High Confidence"
@@ -42,10 +46,24 @@ def predict_image(img_path):
     return predicted_class, confidence, decision
 
 
+# ---------------- ROUTES ----------------
+
 @app.route("/")
 def home():
     return render_template("index.html")
 
+
+@app.route("/upload")
+def upload():
+    return render_template("upload.html")
+
+
+@app.route("/live")
+def live():
+    return render_template("live.html")
+
+
+# 🔥 ADD THESE (THIS IS YOUR MISSING PART)
 
 @app.route("/about")
 def about():
@@ -75,6 +93,22 @@ def predict():
     return render_template("result.html",
                            result=result,
                            image_path=file_path)
+
+
+@app.route("/predict-live", methods=["POST"])
+def predict_live():
+    file = request.files["file"]
+
+    file_path = "static/temp_live.jpg"
+    file.save(file_path)
+
+    label, confidence, decision = predict_image(file_path)
+
+    return jsonify({
+        "class": label,
+        "confidence": confidence,
+        "decision": decision
+    })
 
 
 if __name__ == "__main__":

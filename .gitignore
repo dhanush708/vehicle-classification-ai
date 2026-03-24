@@ -1,0 +1,12 @@
+dataset/
+model/
+__pycache__/
+*.h5
+*.pyc
+
+# temp files
+temp.jpg
+static/temp_live.jpg
+
+# generated evaluation
+static/data/

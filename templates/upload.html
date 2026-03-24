@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Image</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI';
+            background: linear-gradient(135deg, #020617, #0f172a);
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: rgba(30,41,59,0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 85vh;
+        }
+
+        .card {
+            background: rgba(30,41,59,0.8);
+            backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 20px;
+            width: 420px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0,0,0,0.6);
+            animation: fadeIn 0.6s ease;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .drop-zone {
+            border: 2px dashed #38bdf8;
+            padding: 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .drop-zone:hover {
+            background: rgba(56,189,248,0.1);
+        }
+
+        input {
+            display: none;
+        }
+
+        img {
+            max-width: 100%;
+            margin-top: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <div>🚗 Vehicle AI</div>
+    <div>
+        <a href="/">Home</a>
+        <a href="/live">Live Camera</a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>Upload Image</h2>
+
+        <form action="/predict" method="post" enctype="multipart/form-data">
+
+            <label class="drop-zone" id="dropZone">
+                Drag & Drop or Click to Upload
+                <input type="file" name="file" id="fileInput" required>
+            </label>
+
+            <img id="preview">
+
+            <button type="submit">Predict</button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+const fileInput = document.getElementById("fileInput");
+const preview = document.getElementById("preview");
+const dropZone = document.getElementById("dropZone");
+
+fileInput.addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+});
+
+dropZone.addEventListener("click", () => fileInput.click());
+
+dropZone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZone.style.background = "#1e293b";
+});
+
+dropZone.addEventListener("dragleave", () => {
+    dropZone.style.background = "transparent";
+});
+
+dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    fileInput.files = e.dataTransfer.files;
+
+    const file = e.dataTransfer.files[0];
+    preview.src = URL.createObjectURL(file);
+    preview.style.display = "block";
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Camera</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI';
+            background: linear-gradient(135deg, #020617, #0f172a);
+            color: white;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: rgba(30,41,59,0.6);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        video {
+            border-radius: 15px;
+            width: 420px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
+            transition: 0.3s;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        .result {
+            margin-top: 25px;
+            font-size: 22px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .bar-container {
+            background: #334155;
+            width: 250px;
+            margin: auto;
+            border-radius: 10px;
+        }
+
+        .bar {
+            height: 15px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #22c55e, #4ade80);
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        .alert {
+            color: red;
+            font-weight: bold;
+            animation: blink 1s infinite;
+        }
+
+        .loading {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #38bdf8;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        @keyframes blink {
+            0%,100% {opacity: 1;}
+            50% {opacity: 0.3;}
+        }
+
+        @keyframes pulse {
+            0% {opacity: 1;}
+            50% {opacity: 0.5;}
+            100% {opacity: 1;}
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <div>🚗 Vehicle AI</div>
+    <div>
+        <a href="/">Home</a>
+        <a href="/upload">Upload</a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <h2>Live Camera Detection</h2>
+
+    <video id="video" autoplay></video>
+    <br>
+
+    <button onclick="capture()">Capture & Predict</button>
+
+    <div id="loading" class="loading" style="display:none;">
+        Processing...
+    </div>
+
+    <div class="result" id="result"></div>
+
+</div>
+
+<script>
+const video = document.getElementById('video');
+const loading = document.getElementById('loading');
+
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+    video.srcObject = stream;
+});
+
+function capture() {
+    loading.style.display = "block";
+
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0);
+
+    canvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append('file', blob, 'capture.jpg');
+
+        fetch('/predict-live', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            loading.style.display = "none";
+            showResult(data);
+        });
+    });
+}
+
+function showResult(data) {
+    const resultDiv = document.getElementById('result');
+
+    let alert = "";
+    if (data.class === "ambulance") {
+        alert = "<div class='alert'>🚨 EMERGENCY DETECTED 🚨</div>";
+    }
+
+    resultDiv.innerHTML = `
+        <h3>${data.class.toUpperCase()}</h3>
+
+        <div class="bar-container">
+            <div class="bar" id="bar"></div>
+        </div>
+
+        <p>${(data.confidence * 100).toFixed(2)}%</p>
+        <p>${data.decision}</p>
+        ${alert}
+    `;
+
+    setTimeout(() => {
+        document.getElementById("bar").style.width = (data.confidence * 100) + "%";
+    }, 100);
+
+    speak(data.class);
+}
+
+function speak(text) {
+    if (text === "ambulance") {
+        const audio = new Audio("/static/sounds/ambulance.mp3");
+        audio.play();
+    } else {
+        const speech = new SpeechSynthesisUtterance(text);
+        speechSynthesis.speak(speech);
+    }
+}
+</script>
+
+</body>
+</html>

@@ -27,7 +27,7 @@
 
         .container {
             padding: 40px;
-            max-width: 900px;
+            max-width: 950px;
             margin: auto;
         }
 
@@ -37,12 +37,17 @@
         }
 
         .card {
-            background: rgba(30,41,59,0.7);
+            background: rgba(30,41,59,0.75);
             backdrop-filter: blur(15px);
             padding: 25px;
             margin-bottom: 25px;
             border-radius: 15px;
             box-shadow: 0 0 30px rgba(0,0,0,0.4);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.02);
         }
 
         .title {
@@ -63,7 +68,8 @@
     <div>🚗 Vehicle AI</div>
     <div>
         <a href="/">Home</a>
-        <a href="/about">About</a>
+        <a href="/upload">Upload</a>
+        <a href="/live">Live</a>
         <a href="/engineering">Engineering</a>
     </div>
 </nav>
@@ -73,52 +79,44 @@
 <h1>📘 About This Project</h1>
 
 <div class="card">
-    <div class="title">🚀 Project Overview</div>
+    <div class="title">🚀 Overview</div>
     <p>
-        This system classifies vehicle images using Deep Learning. It can detect
-        Car, Bike, Truck, Bus, and Ambulance with high accuracy and includes a
-        confidence-based decision system.
+        This system performs vehicle classification using Deep Learning and supports both
+        image upload and real-time camera detection. It integrates a confidence-based
+        decision layer for better prediction interpretation.
     </p>
 </div>
 
 <div class="card">
-    <div class="title">📁 Dataset Source</div>
-    <p>
-        The dataset was collected from multiple sources including Kaggle and Zenodo
-        to ensure diversity and better generalization.
-    </p>
-</div>
-
-<div class="card">
-    <div class="title">📊 Dataset Details</div>
+    <div class="title">⚡ Features</div>
     <ul>
-        <li>Total Images: ~2000+</li>
-        <li>Classes: 5 (Car, Bike, Truck, Bus, Ambulance)</li>
-        <li>Car: ~350–400 images</li>
-        <li>Bike: ~350–400 images</li>
-        <li>Truck: ~350–400 images</li>
-        <li>Bus: ~300–400 images</li>
-        <li>Ambulance: ~500+ images</li>
+        <li>Upload image classification</li>
+        <li>Live camera detection (real-time)</li>
+        <li>Audio feedback (speech + ambulance siren)</li>
+        <li>Confidence-based decision system</li>
+        <li>Interactive UI with animations</li>
     </ul>
 </div>
 
 <div class="card">
-    <div class="title">🖼 Image Resolution & Format</div>
+    <div class="title">📁 Dataset</div>
     <p>
-        Images were collected in different resolutions ranging from low resolution
-        (200×200) to high resolution (1920×1080). Formats included JPG and PNG.
-        All images were standardized during preprocessing.
+        Data collected from Kaggle and Zenodo to ensure diversity.
     </p>
+    <ul>
+        <li>Total Images: ~2000+</li>
+        <li>Classes: Car, Bike, Truck, Bus, Ambulance</li>
+        <li>Ambulance treated as priority class</li>
+    </ul>
 </div>
 
 <div class="card">
-    <div class="title">🧹 Preprocessing Steps</div>
+    <div class="title">🧹 Preprocessing</div>
     <ul>
-        <li>Resized all images to 224×224</li>
-        <li>Normalized pixel values (0–255 → 0–1)</li>
-        <li>Applied data augmentation (rotation, zoom, flip)</li>
-        <li>Split dataset into 80% training and 20% validation</li>
-        <li>Removed noisy and incorrect samples</li>
+        <li>Resize to 224×224</li>
+        <li>Normalization (0–1 scaling)</li>
+        <li>Augmentation (flip, rotation, zoom)</li>
+        <li>Dataset cleaning</li>
     </ul>
 </div>
 

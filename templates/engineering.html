@@ -9,15 +9,15 @@
         body {
             margin: 0;
             font-family: 'Segoe UI';
-            background: #020617;
+            background: linear-gradient(135deg, #020617, #0f172a);
             color: white;
         }
 
         nav {
             display: flex;
             justify-content: space-between;
-            background: #1e293b;
-            padding: 15px 40px;
+            padding: 20px 40px;
+            background: rgba(30,41,59,0.6);
         }
 
         nav a {
@@ -26,14 +26,55 @@
             margin: 0 15px;
         }
 
-        .section {
+        .container {
             padding: 40px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        h1 {
             text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(30,41,59,0.75);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+        }
+
+        .title {
+            color: #38bdf8;
+            font-size: 20px;
+            margin-bottom: 10px;
         }
 
         canvas {
-            max-width: 600px;
+            max-width: 700px;
             margin: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #334155;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background: #1e293b;
+        }
+
+        .loading {
+            text-align: center;
+            color: #94a3b8;
         }
     </style>
 </head>
@@ -44,32 +85,145 @@
     <div>🚗 Vehicle AI</div>
     <div>
         <a href="/">Home</a>
+        <a href="/upload">Upload</a>
+        <a href="/live">Live</a>
         <a href="/about">About</a>
-        <a href="/engineering">Engineering</a>
     </div>
 </nav>
 
-<div class="section">
-    <h1>Engineering Details</h1>
+<div class="container">
 
-    <p>Model: MobileNetV2</p>
-    <p>Training Accuracy: ~97%</p>
-    <p>Validation Accuracy: ~91%</p>
+<h1>⚙️ Engineering Details</h1>
 
+<!-- DATASET -->
+<div class="card">
+    <div class="title">📁 Dataset Details</div>
+    <ul>
+        <li><b>Source:</b> Kaggle, Zenodo</li>
+        <li><b>Number of Classes:</b> 5 (Car, Bike, Bus, Truck, Ambulance)</li>
+        <li><b>Images per class:</b> ~300–800</li>
+        <li><b>Total Images:</b> ~2000+</li>
+        <li><b>Image Resolution:</b> Resized to 224×224</li>
+        <li><b>Format:</b> JPG / PNG</li>
+    </ul>
+</div>
+
+<!-- PREPROCESSING -->
+<div class="card">
+    <div class="title">🧹 Preprocessing Steps</div>
+    <ul>
+        <li>Image resizing to 224×224</li>
+        <li>Normalization (pixel values scaled 0–1)</li>
+        <li>Data augmentation (flip, rotation, zoom)</li>
+        <li>Noise removal & dataset cleaning</li>
+    </ul>
+</div>
+
+<!-- MODEL -->
+<div class="card">
+    <div class="title">🧠 Model</div>
+    <p>MobileNetV2 (Transfer Learning)</p>
+    <ul>
+        <li>Pretrained CNN for feature extraction</li>
+        <li>Global Average Pooling</li>
+        <li>Dense Layer</li>
+        <li>Softmax Output (5 classes)</li>
+    </ul>
+</div>
+
+<!-- ACCURACY GRAPH -->
+<div class="card">
+    <div class="title">📊 Training vs Validation Accuracy</div>
     <canvas id="chart"></canvas>
 </div>
 
+<!-- REAL METRICS -->
+<div class="card">
+    <div class="title">📈 Evaluation Metrics (Real Model Output)</div>
+
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>Accuracy</td>
+            <td id="accuracy">Loading...</td>
+        </tr>
+        <tr>
+            <td>Precision</td>
+            <td id="precision">Loading...</td>
+        </tr>
+        <tr>
+            <td>Recall</td>
+            <td id="recall">Loading...</td>
+        </tr>
+    </table>
+</div>
+
+<!-- CONFUSION MATRIX -->
+<div class="card">
+    <div class="title">🔍 Confusion Matrix (Real Data)</div>
+    <div id="cmatrix" class="loading">Loading...</div>
+</div>
+
+</div>
+
 <script>
+/* Chart */
 new Chart(document.getElementById('chart'), {
     type: 'line',
     data: {
         labels: [1,2,3,4,5,6,7,8,9,10],
-        datasets: [{
-            label: 'Accuracy',
-            data: [0.80,0.90,0.93,0.95,0.95,0.96,0.95,0.97,0.97,0.97],
-            borderColor: '#38bdf8'
-        }]
+        datasets: [
+            {
+                label: 'Training Accuracy',
+                data: [0.80,0.90,0.93,0.95,0.95,0.96,0.95,0.97,0.97,0.97],
+                borderColor: '#38bdf8',
+                tension: 0.3
+            },
+            {
+                label: 'Validation Accuracy',
+                data: [0.91,0.90,0.90,0.90,0.91,0.91,0.89,0.91,0.90,0.91],
+                borderColor: '#22c55e',
+                tension: 0.3
+            }
+        ]
     }
+});
+
+/* Load REAL metrics */
+fetch("/static/data/metrics.json")
+.then(res => res.json())
+.then(data => {
+
+    document.getElementById("accuracy").innerText = (data.accuracy * 100).toFixed(2) + "%";
+    document.getElementById("precision").innerText = (data.precision * 100).toFixed(2) + "%";
+    document.getElementById("recall").innerText = (data.recall * 100).toFixed(2) + "%";
+
+    const cm = data.confusion_matrix;
+    const labels = data.classes;
+
+    let table = "<table><tr><th>Actual \\ Predicted</th>";
+
+    labels.forEach(l => table += `<th>${l}</th>`);
+    table += "</tr>";
+
+    for (let i = 0; i < cm.length; i++) {
+        table += `<tr><td>${labels[i]}</td>`;
+        for (let j = 0; j < cm[i].length; j++) {
+            table += `<td>${cm[i][j]}</td>`;
+        }
+        table += "</tr>";
+    }
+
+    table += "</table>";
+
+    document.getElementById("cmatrix").innerHTML = table;
+
+})
+.catch(err => {
+    document.getElementById("cmatrix").innerText = "⚠️ Run evaluate.py to generate metrics";
 });
 </script>
 

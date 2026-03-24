@@ -16,14 +16,13 @@
         }
 
         .card {
-            background: rgba(30,41,59,0.8);
-            backdrop-filter: blur(15px);
+            background: rgba(30,41,59,0.85);
             padding: 30px;
             border-radius: 20px;
-            width: 420px;
             text-align: center;
+            width: 420px;
             box-shadow: 0 0 40px rgba(0,0,0,0.6);
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.6s ease;
         }
 
         img {
@@ -35,7 +34,6 @@
         .bar-container {
             background: #334155;
             border-radius: 10px;
-            margin-top: 10px;
         }
 
         .bar {
@@ -43,7 +41,7 @@
             background: linear-gradient(90deg, #22c55e, #4ade80);
             border-radius: 10px;
             width: 0%;
-            animation: grow 1.5s forwards;
+            transition: width 1s ease;
         }
 
         button {
@@ -66,10 +64,6 @@
             to {opacity: 1;}
         }
 
-        @keyframes grow {
-            from {width: 0;}
-        }
-
         @keyframes blink {
             0%,100% {opacity: 1;}
             50% {opacity: 0.3;}
@@ -86,19 +80,55 @@
     <h2>{{ result.class.upper() }}</h2>
 
     <div class="bar-container">
-        <div class="bar" style="width: {{ result.confidence*100 }}%"></div>
+        <div class="bar" id="bar"></div>
     </div>
 
-    <p>{{ (result.confidence*100)|round(2) }}%</p>
+    <p>{{ (result.confidence * 100)|round(2) }}%</p>
     <p>{{ result.decision }}</p>
 
     {% if result.class == "ambulance" %}
         <p class="alert">🚨 EMERGENCY DETECTED 🚨</p>
     {% endif %}
 
-    <button onclick="window.location.href='/'">Try Another</button>
+    <button onclick="window.location.href='/upload'">Try Another</button>
 
 </div>
+
+<script>
+const confidence = {{ result.confidence }};
+const label = "{{ result.class }}";
+
+// animate bar
+setTimeout(() => {
+    document.getElementById("bar").style.width = (confidence * 100) + "%";
+}, 100);
+
+// preload sound
+const ambulanceSound = new Audio("/static/sounds/ambulance.mp3");
+
+// play audio
+function playSound() {
+    window.speechSynthesis.cancel();
+
+    if (label === "ambulance") {
+        ambulanceSound.currentTime = 0;
+        ambulanceSound.play().catch(err => console.log(err));
+    } else {
+        const speech = new SpeechSynthesisUtterance(label);
+        speech.rate = 1;
+        speech.pitch = 1.2;
+        speechSynthesis.speak(speech);
+    }
+}
+
+// ensure browser allows audio
+document.body.addEventListener("click", () => {
+    playSound();
+}, { once: true });
+
+// auto trigger after load (may fail without interaction)
+setTimeout(playSound, 500);
+</script>
 
 </body>
 </html>

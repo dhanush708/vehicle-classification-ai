@@ -6,107 +6,64 @@
     <style>
         body {
             margin: 0;
-            font-family: 'Segoe UI';
+            font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #020617, #0f172a);
             color: white;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px 40px;
-            background: rgba(30,41,59,0.6);
-            backdrop-filter: blur(10px);
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
+            overflow: hidden;
         }
 
         .container {
             display: flex;
+            height: 100vh;
             justify-content: center;
             align-items: center;
-            height: 85vh;
-        }
-
-        .card {
-            background: rgba(30,41,59,0.7);
-            backdrop-filter: blur(15px);
-            padding: 30px;
-            border-radius: 20px;
-            width: 400px;
+            flex-direction: column;
             text-align: center;
-            box-shadow: 0 0 40px rgba(0,0,0,0.6);
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 1s ease;
         }
 
         h1 {
+            font-size: 50px;
             margin-bottom: 10px;
+            letter-spacing: 1px;
         }
 
-        .drop-zone {
-            border: 2px dashed #38bdf8;
-            padding: 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 20px;
+        p {
+            color: #94a3b8;
+            margin-bottom: 40px;
         }
 
-        .drop-zone:hover {
-            background: rgba(56,189,248,0.1);
+        .btn-group {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap; /* 👈 allows second row */
+            justify-content: center;
         }
 
-        input {
-            display: none;
-        }
-
-        img {
-            max-width: 100%;
-            margin-top: 15px;
-            border-radius: 10px;
-        }
-
-        button {
-            margin-top: 15px;
-            padding: 10px 20px;
-            background: #38bdf8;
-            border: none;
-            border-radius: 10px;
+        .btn {
+            padding: 15px 30px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            color: black;
+            font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
+            box-shadow: 0 0 20px rgba(56,189,248,0.4);
         }
 
-        button:hover {
-            transform: scale(1.05);
+        .btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 40px rgba(56,189,248,0.8);
         }
 
-        .result {
-            margin-top: 20px;
-            animation: slideUp 0.5s ease;
-        }
-
-        .bar-container {
-            background: #334155;
-            border-radius: 10px;
-            width: 100%;
-        }
-
-        .bar {
-            height: 20px;
-            background: linear-gradient(90deg, #22c55e, #4ade80);
-            border-radius: 10px;
-            transition: width 1s ease;
-        }
-
-        .alert {
-            margin-top: 10px;
-            color: red;
-            font-weight: bold;
-            font-size: 20px;
-            animation: blink 1s infinite;
+        .bg-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(56,189,248,0.2), transparent);
+            filter: blur(120px);
+            z-index: -1;
+            animation: moveGlow 8s infinite alternate;
         }
 
         @keyframes fadeIn {
@@ -114,91 +71,50 @@
             to {opacity: 1;}
         }
 
-        @keyframes slideUp {
-            from {transform: translateY(20px); opacity: 0;}
-            to {transform: translateY(0); opacity: 1;}
-        }
-
-        @keyframes blink {
-            0%,100% {opacity: 1;}
-            50% {opacity: 0.3;}
+        @keyframes moveGlow {
+            from {transform: translate(-100px, -100px);}
+            to {transform: translate(100px, 100px);}
         }
     </style>
 </head>
 
 <body>
 
-<nav>
-    <div>🚗 Vehicle AI</div>
-    <div>
-        <a href="/">Home</a>
-        <a href="/about">About</a>
-        <a href="/engineering">Engineering</a>
-    </div>
-</nav>
+<div class="bg-glow"></div>
 
 <div class="container">
-    <div class="card">
 
-        <h1>Upload Image</h1>
+    <h1>🚗 Vehicle AI System</h1>
+    <p>Real-time vehicle classification with intelligent decision system</p>
 
-        <form action="/predict" method="post" enctype="multipart/form-data">
+    <div class="btn-group">
+        <div class="btn" onclick="goUpload()">Upload Image</div>
+        <div class="btn" onclick="goLive()">Live Camera</div>
 
-            <label class="drop-zone" id="dropZone">
-                Drag & Drop Image or Click
-                <input type="file" name="file" id="fileInput" required>
-            </label>
-
-            <img id="preview">
-
-            <button type="submit">Predict</button>
-        </form>
-
-        {% if result %}
-        <div class="result">
-            <h2>{{ result.class.upper() }}</h2>
-
-            <div class="bar-container">
-                <div class="bar" style="width: {{ result.confidence*100 }}%"></div>
-            </div>
-
-            <p>{{ (result.confidence*100)|round(2) }}%</p>
-            <p>{{ result.decision }}</p>
-
-            {% if result.class == "ambulance" %}
-                <div class="alert">🚨 EMERGENCY DETECTED 🚨</div>
-            {% endif %}
-        </div>
-        {% endif %}
-
+        <!-- 🔥 ADDED BUTTONS -->
+        <div class="btn" onclick="goAbout()">About</div>
+        <div class="btn" onclick="goEngineering()">Engineering</div>
     </div>
+
 </div>
 
 <script>
-const fileInput = document.getElementById('fileInput');
-const preview = document.getElementById('preview');
-const dropZone = document.getElementById('dropZone');
+function goUpload() {
+    window.location.href = "/upload";
+}
 
-fileInput.addEventListener('change', function(e) {
-    preview.src = URL.createObjectURL(e.target.files[0]);
-});
+function goLive() {
+    window.location.href = "/live";
+}
 
-dropZone.addEventListener('click', () => fileInput.click());
+/* 🔥 ADDED FUNCTIONS */
+function goAbout() {
+    window.location.href = "/about";
+}
 
-dropZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropZone.style.background = "#1e293b";
-});
-
-dropZone.addEventListener('dragleave', () => {
-    dropZone.style.background = "transparent";
-});
-
-dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    fileInput.files = e.dataTransfer.files;
-    preview.src = URL.createObjectURL(e.dataTransfer.files[0]);
-});
+function goEngineering() {
+    window.location.href = "/engineering";
+}
 </script>
 
 </body>
