@@ -75,7 +75,6 @@ To accurately classify vehicles into predefined categories and assess prediction
   - Rotation  
   - Zoom  
   - Horizontal Flip  
-
 - Remove noisy / incorrect samples  
 - Split into training and validation datasets  
 
@@ -103,16 +102,50 @@ To accurately classify vehicles into predefined categories and assess prediction
 
 ---
 
-## 📊 Model Evaluation
+## 🧪 Evaluation Pipeline
 
-The model is evaluated using:
+Model evaluation is performed using a separate script (`evaluate.py`) on the validation dataset.
 
-- **Accuracy**  
-- **Precision**  
-- **Recall**  
-- **Confusion Matrix**  
+### Steps
 
-Evaluation is performed on validation data using `sklearn`.
+1. Load trained model  
+2. Run predictions on validation data  
+3. Compare predictions with true labels  
+4. Compute metrics using `sklearn`  
+
+### Metrics Computed
+
+- Accuracy  
+- Precision (weighted)  
+- Recall (weighted)  
+- Confusion Matrix  
+
+### Output File
+
+static/data/metrics.json
+
+This file is dynamically loaded in the Engineering page.
+
+---
+
+## 📊 Example Output Format
+
+{
+  "accuracy": 0.91,
+  "precision": 0.90,
+  "recall": 0.89,
+  "classes": ["ambulance", "bike", "bus", "car", "truck"],
+  "confusion_matrix": [[...]]
+}
+
+---
+
+## 📈 Interpretation
+
+- Accuracy → overall correctness  
+- Precision → reliability of predictions  
+- Recall → ability to detect each class  
+- Confusion matrix → shows misclassification patterns  
 
 ---
 
@@ -127,7 +160,7 @@ Prediction results are interpreted using confidence thresholds:
 | Low             | Uncertain |
 
 ### Special Handling
-- **Ambulance class uses a lower threshold** to prioritize detection of emergency vehicles.
+- Ambulance class uses a lower threshold for emergency priority  
 
 ---
 
@@ -140,22 +173,21 @@ Prediction results are interpreted using confidence thresholds:
 - Real-time Prediction Display  
 - Confidence Visualization  
 - Audio Feedback:
-  - Speech output for predictions  
-  - Siren alert for ambulance detection  
+  - Speech output  
+  - Ambulance siren alert  
 
 ---
 
 ## 📊 Visualization
 
 - Training vs Validation Accuracy graph  
-- Real-time evaluation metrics display  
-- Confusion matrix representation  
+- Real-time evaluation metrics  
+- Confusion matrix  
 
 ---
 
 ## 🖥 Project Structure
 
-```
 project/
 ├── app.py
 ├── train.py
@@ -174,62 +206,38 @@ project/
 │   ├── about.html
 │   └── engineering.html
 └── README.md
-```
 
 ---
 
 ## ⚙️ Setup Instructions
 
-### Install Dependencies
-
-```bash
+Install dependencies:
 pip install tensorflow flask numpy scikit-learn
-```
 
----
-
-### Train Model
-
-```bash
+Train model:
 python train.py
-```
 
----
-
-### Evaluate Model
-
-```bash
+Evaluate model:
 python evaluate.py
-```
 
----
-
-### Run Application
-
-```bash
+Run app:
 python app.py
-```
 
----
-
-### Open in Browser
-
-```
+Open:
 http://127.0.0.1:5000/
-```
 
 ---
 
 ## ⚠️ Observations
 
-- Some visual similarity between truck and bus may cause confusion  
-- Model performance improves with more diverse training data  
+- Some confusion between visually similar classes (truck vs bus)  
+- Performance improves with better dataset diversity  
 
 ---
 
 ## 👥 Team
 
-**Tamil Geeks**
+Tamil Geeks
 
 - Dhanush  
 - Maha Mithra  
@@ -240,7 +248,7 @@ http://127.0.0.1:5000/
 
 ## 📎 Notes
 
-- Performance depends on dataset quality and diversity  
-- The system is designed to demonstrate real-world classification behavior with decision interpretation  
+- Performance depends on dataset quality  
+- Designed to demonstrate real-world ML behavior with decision logic  
 
 ---
