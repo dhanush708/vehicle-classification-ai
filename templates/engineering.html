@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Engineering</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI';
+            background: #020617;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            background: #1e293b;
+            padding: 15px 40px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .section {
+            padding: 40px;
+            text-align: center;
+        }
+
+        canvas {
+            max-width: 600px;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <div>🚗 Vehicle AI</div>
+    <div>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/engineering">Engineering</a>
+    </div>
+</nav>
+
+<div class="section">
+    <h1>Engineering Details</h1>
+
+    <p>Model: MobileNetV2</p>
+    <p>Training Accuracy: ~97%</p>
+    <p>Validation Accuracy: ~91%</p>
+
+    <canvas id="chart"></canvas>
+</div>
+
+<script>
+new Chart(document.getElementById('chart'), {
+    type: 'line',
+    data: {
+        labels: [1,2,3,4,5,6,7,8,9,10],
+        datasets: [{
+            label: 'Accuracy',
+            data: [0.80,0.90,0.93,0.95,0.95,0.96,0.95,0.97,0.97,0.97],
+            borderColor: '#38bdf8'
+        }]
+    }
+});
+</script>
+
+</body>
+</html>

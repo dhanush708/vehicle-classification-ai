@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>About</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI';
+            background: linear-gradient(135deg, #020617, #0f172a);
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: rgba(30,41,59,0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .container {
+            padding: 40px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: rgba(30,41,59,0.7);
+            backdrop-filter: blur(15px);
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.4);
+        }
+
+        .title {
+            color: #38bdf8;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <div>🚗 Vehicle AI</div>
+    <div>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/engineering">Engineering</a>
+    </div>
+</nav>
+
+<div class="container">
+
+<h1>📘 About This Project</h1>
+
+<div class="card">
+    <div class="title">🚀 Project Overview</div>
+    <p>
+        This system classifies vehicle images using Deep Learning. It can detect
+        Car, Bike, Truck, Bus, and Ambulance with high accuracy and includes a
+        confidence-based decision system.
+    </p>
+</div>
+
+<div class="card">
+    <div class="title">📁 Dataset Source</div>
+    <p>
+        The dataset was collected from multiple sources including Kaggle and Zenodo
+        to ensure diversity and better generalization.
+    </p>
+</div>
+
+<div class="card">
+    <div class="title">📊 Dataset Details</div>
+    <ul>
+        <li>Total Images: ~2000+</li>
+        <li>Classes: 5 (Car, Bike, Truck, Bus, Ambulance)</li>
+        <li>Car: ~350–400 images</li>
+        <li>Bike: ~350–400 images</li>
+        <li>Truck: ~350–400 images</li>
+        <li>Bus: ~300–400 images</li>
+        <li>Ambulance: ~500+ images</li>
+    </ul>
+</div>
+
+<div class="card">
+    <div class="title">🖼 Image Resolution & Format</div>
+    <p>
+        Images were collected in different resolutions ranging from low resolution
+        (200×200) to high resolution (1920×1080). Formats included JPG and PNG.
+        All images were standardized during preprocessing.
+    </p>
+</div>
+
+<div class="card">
+    <div class="title">🧹 Preprocessing Steps</div>
+    <ul>
+        <li>Resized all images to 224×224</li>
+        <li>Normalized pixel values (0–255 → 0–1)</li>
+        <li>Applied data augmentation (rotation, zoom, flip)</li>
+        <li>Split dataset into 80% training and 20% validation</li>
+        <li>Removed noisy and incorrect samples</li>
+    </ul>
+</div>
+
+<div class="card">
+    <div class="title">👥 Team</div>
+    <p>
+        Tamil Geeks<br>
+        Dhanush, Maha Mithra, Mohan Babu, Raksha
+    </p>
+</div>
+
+</div>
+
+</body>
+</html>

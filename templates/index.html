@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vehicle AI</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI';
+            background: linear-gradient(135deg, #020617, #0f172a);
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: rgba(30,41,59,0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 85vh;
+        }
+
+        .card {
+            background: rgba(30,41,59,0.7);
+            backdrop-filter: blur(15px);
+            padding: 30px;
+            border-radius: 20px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0,0,0,0.6);
+            animation: fadeIn 0.5s ease;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .drop-zone {
+            border: 2px dashed #38bdf8;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .drop-zone:hover {
+            background: rgba(56,189,248,0.1);
+        }
+
+        input {
+            display: none;
+        }
+
+        img {
+            max-width: 100%;
+            margin-top: 15px;
+            border-radius: 10px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #38bdf8;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        .result {
+            margin-top: 20px;
+            animation: slideUp 0.5s ease;
+        }
+
+        .bar-container {
+            background: #334155;
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        .bar {
+            height: 20px;
+            background: linear-gradient(90deg, #22c55e, #4ade80);
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .alert {
+            margin-top: 10px;
+            color: red;
+            font-weight: bold;
+            font-size: 20px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        @keyframes slideUp {
+            from {transform: translateY(20px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+
+        @keyframes blink {
+            0%,100% {opacity: 1;}
+            50% {opacity: 0.3;}
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <div>🚗 Vehicle AI</div>
+    <div>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/engineering">Engineering</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="card">
+
+        <h1>Upload Image</h1>
+
+        <form action="/predict" method="post" enctype="multipart/form-data">
+
+            <label class="drop-zone" id="dropZone">
+                Drag & Drop Image or Click
+                <input type="file" name="file" id="fileInput" required>
+            </label>
+
+            <img id="preview">
+
+            <button type="submit">Predict</button>
+        </form>
+
+        {% if result %}
+        <div class="result">
+            <h2>{{ result.class.upper() }}</h2>
+
+            <div class="bar-container">
+                <div class="bar" style="width: {{ result.confidence*100 }}%"></div>
+            </div>
+
+            <p>{{ (result.confidence*100)|round(2) }}%</p>
+            <p>{{ result.decision }}</p>
+
+            {% if result.class == "ambulance" %}
+                <div class="alert">🚨 EMERGENCY DETECTED 🚨</div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<script>
+const fileInput = document.getElementById('fileInput');
+const preview = document.getElementById('preview');
+const dropZone = document.getElementById('dropZone');
+
+fileInput.addEventListener('change', function(e) {
+    preview.src = URL.createObjectURL(e.target.files[0]);
+});
+
+dropZone.addEventListener('click', () => fileInput.click());
+
+dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.style.background = "#1e293b";
+});
+
+dropZone.addEventListener('dragleave', () => {
+    dropZone.style.background = "transparent";
+});
+
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    fileInput.files = e.dataTransfer.files;
+    preview.src = URL.createObjectURL(e.dataTransfer.files[0]);
+});
+</script>
+
+</body>
+</html>
